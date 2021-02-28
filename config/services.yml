@@ -1,0 +1,18 @@
+imports:
+    - { resource: alias.yml }
+
+services:
+    _defaults:
+        autowire: true
+        bind:
+            $tables: '%tables%'
+            $images_path: '%core.root_path%ext/david63/verifiedmember/images'
+        public: true
+
+    david63.verifiedmember.listener:
+        class: david63\verifiedmember\event\listener
+        tags:
+            - { name: event.listener }
+
+    david63.verifiedmember.core.functions:
+        class: david63\verifiedmember\core\functions
