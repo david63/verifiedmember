@@ -1,6 +1,6 @@
-# Schedule Topic Lock extension for phpBB
+# Verified Member extension for phpBB
 
-An extension to schedule the locking of a topic.
+An extension that adds the option to show members of a group as verified.
 
 [![Build Status](https://github.com/david63/verifiedmember/workflows/Tests/badge.svg)](https://github.com/phpbb-extensions/david63/verifiedmember)
 [![License](https://poser.pugx.org/david63/verifiedmember/license)](https://packagist.org/packages/david63/verifiedmember)
@@ -20,13 +20,13 @@ An extension to schedule the locking of a topic.
 1. [Download the latest release](https://github.com/david63/verifiedmember/archive/3.3.zip) and unzip it.
 2. Unzip the downloaded release and copy it to the `ext` directory of your phpBB board.
 3. Navigate in the ACP to `Customise -> Manage extensions`.
-4. Look for `Schedule topic lock` under the Disabled Extensions list and click its `Enable` link.
+4. Look for `Verified member` under the Disabled Extensions list and click its `Enable` link.
 
 ## Usage
-1. Navigate in the ACP to `Extensions -> Schedule topic lock -> Schedule topic lock`.
-2. Apply the settings that you require.
-3. Set the `Can schedule topic lock` permission for the groups/users that are able to schedule topic locking.
-4. Navigate in the ACP to `Forums` and set the `Schedule topic lock` option for the forums that are able to have topics scheduled to be locked if the `All forums` option was not selected at point 2 above.
+1. Navigate in the ACP to `Users and Groups -> Groups -> Manage Groups`.
+2. Select `Settings` for a group.
+3. Select an image for the `Verified member` option in the group.
+
 
 ## Uninstall
 1. Navigate in the ACP to `Customise -> Manage extensions`.
