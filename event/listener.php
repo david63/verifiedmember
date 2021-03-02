@@ -216,7 +216,7 @@ class listener implements EventSubscriberInterface
 
 		if ($verify_image && ($mode == 'full' || ($mode == 'username' && !$event['custom_profile_url'])))
 		{
-			$username_string = $username_string . '&nbsp;<img src="' . $this->images_path . '/' . $verify_image['group_verified_member'] . '" />';
+			$username_string = $username_string . '&nbsp;<img src="' . generate_board_url() . $this->images_path . '/' . $verify_image['group_verified_member'] . '" />';
 		}
 
 		$event['username_string'] = $username_string;
