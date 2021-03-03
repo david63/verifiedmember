@@ -91,6 +91,7 @@ class listener implements EventSubscriberInterface
 			'core.acp_manage_group_initialise_data'	=> 'manage_group_initialise_data',
 			'core.acp_manage_group_display_form' 	=> 'manage_group_display_form',
 			'core.memberlist_prepare_profile_data'	=> 'profile_template',
+			'core.viewtopic_cache_user_data'		=> 'modify_user_cache',
 			'core.modify_username_string'			=> 'modify_username',
 		];
 	}
@@ -99,7 +100,8 @@ class listener implements EventSubscriberInterface
 	* Show whether a member is verified on ACP overview
 	*
 	* @param object $event The event object
-	* @return null
+	*
+	* @return $template
 	* @access public
 	*/
 	public function acp_verified_member($event)
@@ -122,6 +124,8 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Add a group
 	 *
+	 * @param object $event The event object
+	 *
 	 * @return  $event
 	 * @access  public
 	 */
@@ -134,6 +138,8 @@ class listener implements EventSubscriberInterface
 
 	/**
 	 * Initialise the group data
+	 *
+	 * @param object $event The event object
 	 *
 	 * @return  $event
 	 * @access  public
@@ -156,7 +162,9 @@ class listener implements EventSubscriberInterface
 	/**
 	 * Display the group data
 	 *
-	 * @return  $event
+	 * @param object $event The event object
+	 *
+	 * @return  $template
 	 * @access  public
 	 */
 	public function manage_group_display_form($event)
@@ -191,20 +199,39 @@ class listener implements EventSubscriberInterface
 	 * Modify the profile template data
 	 * This is needed to prevent problems with Memberlist popup
 	 *
+	 * @param object $event The event object
+	 *
 	 * @return  $event
 	 * @access  public
 	 */
 	public function profile_template($event)
 	{
 		$template_data 					= $event['template_data'];
-		$data 							= $event['data'];
-		$template_data['A_USERNAME']	= addslashes(get_username_string('username', $data['user_id'], $data['username'], $data['user_colour'], false, true));
+		$template_data['A_USERNAME']	= $this->strip_verify_image($template_data['A_USERNAME']);;
 		$event['template_data'] 		= $template_data;
+	}
+
+	/**
+	 * Modify the user_data_cache
+	 * This is needed to prevent problems with Contact popup
+	 *
+	 * @param object $event The event object
+	 *
+	 * @return  $event
+	 * @access  public
+	 */
+	public function modify_user_cache($event)
+	{
+		$user_cache_data 					= $event['user_cache_data'];
+		$user_cache_data['contact_user']	= $this->strip_verify_image($user_cache_data['contact_user']);
+		$event['user_cache_data'] 			= $user_cache_data;
 	}
 
 	/**
 	 * Modify the username string
 	 *
+	 * @param object $event The event object
+	 *	  
 	 * @return  $event
 	 * @access  public
 	 */
@@ -213,13 +240,25 @@ class listener implements EventSubscriberInterface
 		$username_string 	= $event['username_string'];
 		$mode 				= $event['mode'];
 		$verify_image 		= $this->get_group_image($event['user_id']);
+		$generate_board_url = (strpos($this->request->server('PHP_SELF'), 'adm') !== false) ? '' : generate_board_url();
 
-		if ($verify_image && ($mode == 'full' || ($mode == 'username' && !$event['custom_profile_url'])))
+		if ($verify_image && ($mode == 'full' || $mode == 'username'))
 		{
-			$username_string = $username_string . '&nbsp;<img src="' . generate_board_url() . $this->images_path . '/' . $verify_image['group_verified_member'] . '" />';
+			$username_string = $username_string . '&nbsp;<img src="' . $generate_board_url . $this->images_path . '/' . $verify_image['group_verified_member'] . '" />';
 		}
 
 		$event['username_string'] = $username_string;
+	}
+
+	/**
+	 * Strip the verify image from the username
+	 *
+	 * @return  username
+	 * @access  public
+	 */
+	public function strip_verify_image($data)
+	{
+		return substr($data, 0, strpos($data , '<'));
 	}
 
 	/**
