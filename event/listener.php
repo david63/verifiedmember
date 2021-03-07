@@ -206,9 +206,14 @@ class listener implements EventSubscriberInterface
 	 */
 	public function profile_template($event)
 	{
-		$template_data 					= $event['template_data'];
-		$template_data['A_USERNAME']	= $this->strip_verify_image($template_data['A_USERNAME']);;
-		$event['template_data'] 		= $template_data;
+		$template_data 	= $event['template_data'];
+		// Use this to check if the user has a group image
+		$group_member	= $this->get_group_image($event['data']['user_id']);
+		if ($group_member)
+		{
+			$template_data['A_USERNAME']	= $this->strip_verify_image($template_data['A_USERNAME']);;
+			$event['template_data'] 		= $template_data;
+		}
 	}
 
 	/**
@@ -231,7 +236,7 @@ class listener implements EventSubscriberInterface
 	 * Modify the username string
 	 *
 	 * @param object $event The event object
-	 *	  
+	 *
 	 * @return  $event
 	 * @access  public
 	 */
@@ -285,7 +290,7 @@ class listener implements EventSubscriberInterface
 
 		$result = $this->db->sql_query($sql);
 
-		$image_data = '';
+		$image_data 	= '';
 
 		while ($row = $this->db->sql_fetchrow($result))
 		{
