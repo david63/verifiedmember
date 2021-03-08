@@ -92,7 +92,10 @@ class listener implements EventSubscriberInterface
 			'core.acp_manage_group_display_form' 	=> 'manage_group_display_form',
 			'core.memberlist_prepare_profile_data'	=> 'profile_template',
 			'core.viewtopic_cache_user_data'		=> 'modify_user_cache',
-			'core.modify_username_string'			=> 'modify_username',
+			'core.modify_username_string'			=> [
+				'modify_username',
+				-10, // Make compatible with other extensions using this event
+			],
 		];
 	}
 
