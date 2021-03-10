@@ -2,7 +2,7 @@
 	"name": "david63/verifiedmember",
 	"type": "phpbb-extension",
 	"description": "An extension that adds the option to show members of a group as verified.",
-	"version": "3.3.0-RC4",
+	"version": "3.3.0-RC5",
 	"time": "2021-02-28",
 	"keywords": [
 		"phpbb",

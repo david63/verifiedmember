@@ -86,17 +86,32 @@ class listener implements EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return [
+			'core.user_setup'						=> 'load_language_on_setup',
 			'core.acp_users_overview_before'		=> 'acp_verified_member',
 			'core.acp_manage_group_request_data'	=> 'add_group',
 			'core.acp_manage_group_initialise_data'	=> 'manage_group_initialise_data',
 			'core.acp_manage_group_display_form' 	=> 'manage_group_display_form',
 			'core.memberlist_prepare_profile_data'	=> 'profile_template',
 			'core.viewtopic_cache_user_data'		=> 'modify_user_cache',
-			'core.modify_username_string'			=> [
-				'modify_username',
-				-10, // Make compatible with other extensions using this event
-			],
+			'core.modify_username_string'			=> ['modify_username', -10], // Make compatible with other extensions using this event
 		];
+	}
+
+	/**
+	* Load common language file during user setup
+	*
+	* @param object $event The event object
+	* @return null
+	* @access public
+	*/
+	public function load_language_on_setup($event)
+	{
+		$lang_set_ext	= $event['lang_set_ext'];
+		$lang_set_ext[]	= array(
+			'ext_name' => $this->functions->get_ext_namespace(),
+			'lang_set' => 'vm_common',
+		);
+		$event['lang_set_ext'] = $lang_set_ext;
 	}
 
 	/**
@@ -248,11 +263,13 @@ class listener implements EventSubscriberInterface
 		$username_string 	= $event['username_string'];
 		$mode 				= $event['mode'];
 		$verify_image 		= $this->get_group_image($event['user_id']);
+		// Need to do a bit of manipulation here for ACP or non ACP
 		$generate_board_url = (strpos($this->request->server('PHP_SELF'), 'adm') !== false) ? '' : generate_board_url();
+		$images_path		= (strpos($this->request->server('PHP_SELF'), 'adm') !== false) ? $this->images_path : substr($this->images_path, 1);
 
 		if ($verify_image && ($mode == 'full' || $mode == 'username'))
 		{
-			$username_string = $username_string . '&nbsp;<img src="' . $generate_board_url . $this->images_path . '/' . $verify_image['group_verified_member'] . '" />';
+			$username_string = $username_string . '&nbsp;<img src="' . $generate_board_url . $images_path . '/' . $verify_image['group_verified_member'] . '" title="' . $this->language->lang('VERIFIED_CHECKED') .'" />';
 		}
 
 		$event['username_string'] = $username_string;
