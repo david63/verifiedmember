@@ -6,7 +6,8 @@ services:
         autowire: true
         bind:
             $tables: '%tables%'
-            $images_path: '%core.root_path%ext/david63/verifiedmember/images'
+            $root_path: '%core.root_path%'
+            $images_path: '/ext/david63/verifiedmember/images/'
         public: true
 
     david63.verifiedmember.listener:
