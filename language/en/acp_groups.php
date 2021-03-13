@@ -40,7 +40,10 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, [
 	'SELECT_IMAGE'				=> 'Select image',
+	'SELECT_TITLE'				=> 'Select title',
 	
 	'VERIFIED_MEMBER'			=> 'Verified member',
 	'VERIFIED_MEMBER_EXPLAIN'	=> 'Select the image to be shown against the member’s name.',
+	'VERIFIED_TITLE'			=> 'Verified title',
+	'VERIFIED_TITLE_EXPLAIN'	=> 'The title that will appear when a user hovers over the verified member image.'
 ]);

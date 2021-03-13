@@ -21,7 +21,8 @@ class version_3_3_0 extends \phpbb\db\migration\migration
 		return [
 			'add_columns' => [
 				$this->table_prefix . 'groups' => [
-					'group_verified_member' => ['VCHAR:50', ''],
+					'group_verified_member'	=> ['VCHAR:50', ''],
+					'group_verified_title' 	=> ['VCHAR:50', ''],
 				],
 			],
 		];
@@ -39,6 +40,7 @@ class version_3_3_0 extends \phpbb\db\migration\migration
 			'drop_columns' => [
 				$this->table_prefix . 'groups' => [
 					'group_verified_member',
+					'group_verified_title',
 				],
 			],
 		];

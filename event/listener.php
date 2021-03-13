@@ -140,7 +140,7 @@ class listener implements EventSubscriberInterface
 
 			'SHOW_VERIFY_IMAGE'	=> ($verify_image) ? true : false,
 
-			'VERIFIED_MEMBER' 	=> ($verify_image) ? $this->language->lang('Yes') : $this->language->lang('NO'),
+			'VERIFIED_MEMBER' 	=> ($verify_image) ? $this->language->lang('YES') : $this->language->lang('NO'),
 			'VERIFY_IMAGE' 		=> ($verify_image) ? $this->root_path . $this->images_path . $verify_image['group_verified_member'] : '',
 		]);
 	}
@@ -155,9 +155,10 @@ class listener implements EventSubscriberInterface
 	 */
 	public function add_group($event)
 	{
-		$submit_ary                    = $event['submit_ary'];
-		$submit_ary['verified_member'] = $this->request->variable('group_verified_member', '');
-		$event['submit_ary']           = $submit_ary;
+		$submit_ary                    	= $event['submit_ary'];
+		$submit_ary['verified_member']	= $this->request->variable('group_verified_member', '');
+		$submit_ary['verified_title']	= $this->request->variable('group_verified_title', '');
+		$event['submit_ary']           	= $submit_ary;
 	}
 
 	/**
@@ -174,9 +175,12 @@ class listener implements EventSubscriberInterface
 		$test_variables = $event['test_variables'];
 		$submit_ary     = $event['submit_ary'];
 
-		$group_row['verified_member']      = $this->request->variable('group_verified_member', '');
-		$test_variables['verified_member'] = 'string';
-		$submit_ary['verified_member']     = $this->request->variable('group_verified_member', '');
+		$group_row['verified_member']      	= $this->request->variable('group_verified_member', '');
+		$group_row['verified_title']      	= $this->request->variable('group_verified_title', '');
+		$test_variables['verified_member'] 	= 'string';
+		$test_variables['verified_title'] 	= 'string';
+		$submit_ary['verified_member']     	= $this->request->variable('group_verified_member', '');
+		$submit_ary['verified_title']     	= $this->request->variable('group_verified_title', '');
 
 		$event['group_row']      = $group_row;
 		$event['test_variables'] = $test_variables;
@@ -193,12 +197,13 @@ class listener implements EventSubscriberInterface
 	 */
 	public function manage_group_display_form($event)
 	{
-		$this->language->add_lang('acp_groups', $this->functions->get_ext_namespace());
+		$this->language->add_lang(['acp_groups', 'vm_common'], $this->functions->get_ext_namespace());
 
 		$group_row                          = $event['group_row'];
 		$group_row['group_verified_member'] = (!empty($group_row)) ? $group_row['group_verified_member'] : '';
+		$group_row['group_verified_title']	= (!empty($group_row)) ? $group_row['group_verified_title'] : '';
 
-		// Create the select list from the images folder
+		// Create the images select list from the images folder
 		$image_files = '';
 		$files       = array_slice(scandir($this->root_path . $this->images_path), 2);
 		$selected    = ($group_row['group_verified_member'] == '') ? ' selected="selected"' : '';
@@ -206,15 +211,28 @@ class listener implements EventSubscriberInterface
 
 		foreach ($files as $image)
 		{
-			$selected = ($group_row['group_verified_member'] == $image) ? ' selected="selected"' : '';
-			$image_files .= '<option value="' . $image . '"' . $selected . '>' . $image . '</option>';
+			$selected 		= ($group_row['group_verified_member'] == $image) ? ' selected="selected"' : '';
+			$image_files	.= '<option value="' . $image . '"' . $selected . '>' . $image . '</option>';
 		}
 		$image_select = '<select name="group_verified_member" id="group_verified_member">' . $image_files . '</select>';
+
+		// Create the titles select list
+		$title_options	= '';
+		$selected		= ($group_row['group_verified_title'] == '') ? ' selected="selected"' : '';
+		$title_options	.= '<option value="' . '' . '"' . $selected . '>' . $this->language->lang('SELECT_TITLE') . '</option>';
+
+		foreach ($this->language->lang_raw('VERIFIED') as $key => $title)
+		{
+			$selected		= ($group_row['group_verified_title'] == $key) ? ' selected="selected"' : '';
+			$title_options	.= '<option value="' . $key . '"' . $selected . '>' . $title . '</option>';
+		}
+		$title_select = '<select name="group_verified_title" id="group_verified_title">' . $title_options . '</select>';
 
 		$this->template->assign_vars([
 			'SHOW_VERIFY_IMAGE'	=> ($group_row['group_verified_member']) ? true : false,
 
 			'VERIFIED_MEMBER' 	=> $image_select,
+			'VERIFIED_TITLE' 	=> $title_select,
 			'VERIFY_IMAGE' 		=> $this->root_path . $this->images_path . $group_row['group_verified_member'],
 		]);
 	}
@@ -293,7 +311,7 @@ class listener implements EventSubscriberInterface
 
 		if ($verify_image && ($mode == 'full' || $mode == 'username'))
 		{
-			$username_string = $username_string . '&nbsp;<img src="' . generate_board_url() . $this->images_path . $verify_image['group_verified_member'] . '" title="' . $this->language->lang('VERIFIED_CHECKED') . '" />';
+			$username_string = $username_string . '&nbsp;<img src="' . generate_board_url() . $this->images_path . $verify_image['group_verified_member'] . '" title="' . $this->language->lang(['VERIFIED', $verify_image['group_verified_title']]) . '" />';
 
 			$event['username_string'] = $username_string;
 		}
@@ -319,7 +337,7 @@ class listener implements EventSubscriberInterface
 	public function get_group_image($user_id)
 	{
 		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT' => 'g.group_verified_member, g.group_name',
+			'SELECT' => 'g.group_verified_member, g.group_verified_title, g.group_name',
 			'FROM' => [
 				$this->tables['groups'] => 'g',
 			],

@@ -39,5 +39,10 @@ if (empty($lang) || !is_array($lang))
  */
 
 $lang = array_merge($lang, [
-	'VERIFIED_CHECKED' => 'Verified member',
+	'VERIFIED'	=> [
+		'CHECKED'	=> 'Verified member',
+		'UNCHECKED'	=> 'Non verified member',
+		'QUERIED'	=> 'Query verification',
+		'OTHER'		=> 'Other',
+	],
 ]);
