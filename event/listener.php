@@ -74,7 +74,7 @@ class listener implements EventSubscriberInterface
 		$this->db           = $db;
 		$this->language     = $language;
 		$this->template     = $template;
-		$this->group_helper = $group_helper;
+		$this->group_helper	= $group_helper;
 		$this->functions    = $functions;
 		$this->tables       = $tables;
 		$this->images_path  = $images_path;
@@ -305,15 +305,19 @@ class listener implements EventSubscriberInterface
 	 */
 	public function modify_username($event)
 	{
-		$username_string	= $event['username_string'];
-		$mode            	= $event['mode'];
-		$verify_image		= $this->get_group_image($event['user_id']);
-
-		if ($verify_image && ($mode == 'full' || $mode == 'username'))
+		// We do not want to run this function on the portal extension
+		if (!strpos($this->request->server('PHP_SELF'), 'portal'))
 		{
-			$username_string = $username_string . '&nbsp;<img src="' . generate_board_url() . $this->images_path . $verify_image['group_verified_member'] . '" title="' . $this->language->lang(['VERIFIED', $verify_image['group_verified_title']]) . '" />';
+			$username_string	= $event['username_string'];
+			$mode            	= $event['mode'];
+			$verify_image		= $this->get_group_image($event['user_id']);
 
-			$event['username_string'] = $username_string;
+			if ($verify_image && ($mode == 'full' || $mode == 'username'))
+			{
+				$username_string = $username_string . '&nbsp;<img src="' . generate_board_url() . $this->images_path . $verify_image['group_verified_member'] . '" title="' . $this->language->lang(['VERIFIED', $verify_image['group_verified_title']]) . '" />';
+
+				$event['username_string'] = $username_string;
+			}
 		}
 	}
 

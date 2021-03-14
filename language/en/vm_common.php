@@ -42,6 +42,7 @@ $lang = array_merge($lang, [
 	'VERIFIED'	=> [
 		'CHECKED'	=> 'Verified member',
 		'UNCHECKED'	=> 'Non verified member',
+		'PENDING'	=> 'Pending verification',
 		'QUERIED'	=> 'Query verification',
 		'OTHER'		=> 'Other',
 	],
