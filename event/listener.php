@@ -97,6 +97,7 @@ class listener implements EventSubscriberInterface
 			'core.acp_manage_group_initialise_data'	=> 'manage_group_initialise_data',
 			'core.acp_manage_group_display_form' 	=> 'manage_group_display_form',
 			'core.memberlist_prepare_profile_data' 	=> 'profile_template',
+			'core.ucp_pm_view_messsage'				=> 'pm_view_message',
 			'core.viewtopic_cache_user_data' 		=> 'modify_user_cache',
 			'core.topic_review_modify_row'			=> 'modify_topic_review',
 			'core.viewtopic_modify_post_row'		=> ['modify_post_row', -10], // Run after other extensions
@@ -257,6 +258,21 @@ class listener implements EventSubscriberInterface
 			$template_data['A_USERNAME'] = $this->strip_verify_image($template_data['A_USERNAME']);
 			$event['template_data']      = $template_data;
 		}
+	}
+
+	/**
+	 * Modify PM data
+	 *
+	 * @param object $event The event object
+	 *
+	 * @return  $event
+	 * @access  public
+	 */
+	public function pm_view_message($event)
+	{
+		$msg_data					= $event['msg_data'];
+		$msg_data['CONTACT_USER']	= $this->strip_verify_image($msg_data['CONTACT_USER']);
+		$event['msg_data']        	= $msg_data;
 	}
 
 	/**
