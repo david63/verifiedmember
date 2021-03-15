@@ -98,6 +98,7 @@ class listener implements EventSubscriberInterface
 			'core.acp_manage_group_display_form' 	=> 'manage_group_display_form',
 			'core.memberlist_prepare_profile_data' 	=> 'profile_template',
 			'core.viewtopic_cache_user_data' 		=> 'modify_user_cache',
+			'core.topic_review_modify_row'			=> 'modify_topic_review',
 			'core.viewtopic_modify_post_row'		=> ['modify_post_row', -10], // Run after other extensions
 			'core.modify_username_string'	 		=> ['modify_username', -10], // Make compatible with other extensions using this event
 		];
@@ -272,6 +273,22 @@ class listener implements EventSubscriberInterface
 		$user_cache_data                 = $event['user_cache_data'];
 		$user_cache_data['contact_user'] = $this->strip_verify_image($user_cache_data['contact_user']);
 		$event['user_cache_data']        = $user_cache_data;
+	}
+
+	/**
+	 * Modify the topic review
+	 *
+	 * @param object $event The event object
+	 *
+	 * @return  $event
+	 * @access  public
+	 */
+	public function modify_topic_review($event)
+	{
+		$post_row 					= $event['post_row'];
+		$post_row['POSTER_QUOTE']	= $this->strip_verify_image($post_row['POSTER_QUOTE']);
+		$post_row['POST_AUTHOR'] 	= $this->strip_verify_image($post_row['POST_AUTHOR']);
+		$event['post_row']        	= $post_row;
 	}
 
 	/**
