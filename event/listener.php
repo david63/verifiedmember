@@ -91,17 +91,18 @@ class listener implements EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return [
-			'core.user_setup' 						=> 'load_language_on_setup',
-			'core.acp_users_overview_before' 		=> 'acp_verified_member',
-			'core.acp_manage_group_request_data' 	=> 'add_group',
-			'core.acp_manage_group_initialise_data'	=> 'manage_group_initialise_data',
-			'core.acp_manage_group_display_form' 	=> 'manage_group_display_form',
-			'core.memberlist_prepare_profile_data' 	=> 'profile_template',
-			'core.ucp_pm_view_messsage'				=> 'pm_view_message',
-			'core.viewtopic_cache_user_data' 		=> 'modify_user_cache',
-			'core.topic_review_modify_row'			=> 'modify_topic_review',
-			'core.viewtopic_modify_post_row'		=> ['modify_post_row', -10], // Run after other extensions
-			'core.modify_username_string'	 		=> ['modify_username', -10], // Make compatible with other extensions using this event
+			'core.user_setup' 							=> 'load_language_on_setup',
+			'core.acp_users_overview_before' 			=> 'acp_verified_member',
+			'core.acp_manage_group_request_data' 		=> 'add_group',
+			'core.acp_manage_group_initialise_data'		=> 'manage_group_initialise_data',
+			'core.acp_manage_group_display_form' 		=> 'manage_group_display_form',
+			'core.memberlist_prepare_profile_data' 		=> 'profile_template',
+			'core.ucp_pm_view_messsage'					=> 'pm_view_message',
+			'core.message_history_modify_template_vars'	=> 'pm_quote_modify',
+			'core.viewtopic_cache_user_data' 			=> 'modify_user_cache',
+			'core.topic_review_modify_row'				=> 'modify_topic_review',
+			'core.viewtopic_modify_post_row'			=> ['modify_post_row', -10], // Run after other extensions
+			'core.modify_username_string'	 			=> ['modify_username', -10], // Make compatible with other extensions using this event
 		];
 	}
 
@@ -273,6 +274,21 @@ class listener implements EventSubscriberInterface
 		$msg_data					= $event['msg_data'];
 		$msg_data['CONTACT_USER']	= $this->strip_verify_image($msg_data['CONTACT_USER']);
 		$event['msg_data']        	= $msg_data;
+	}
+
+	/**
+	 * Modify PM quote data
+	 *
+	 * @param object $event The event object
+	 *
+	 * @return  $event
+	 * @access  public
+	 */
+	public function pm_quote_modify($event)
+	{
+		$template_vars 						= $event['template_vars'];
+		$template_vars['MESSAGE_AUTHOR']	= $this->strip_verify_image($template_vars['MESSAGE_AUTHOR']);
+		$event['template_vars']        		= $template_vars;
 	}
 
 	/**
