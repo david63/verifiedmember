@@ -286,9 +286,10 @@ class listener implements EventSubscriberInterface
 	 */
 	public function pm_quote_modify($event)
 	{
-		$template_vars 						= $event['template_vars'];
-		$template_vars['MESSAGE_AUTHOR']	= $this->strip_verify_image($template_vars['MESSAGE_AUTHOR']);
-		$event['template_vars']        		= $template_vars;
+		$template_vars 							= $event['template_vars'];
+		$template_vars['MESSAGE_AUTHOR']		= $this->strip_verify_image($template_vars['MESSAGE_AUTHOR']);
+		$template_vars['MESSAGE_AUTHOR_QUOTE']	= $this->strip_verify_image($template_vars['MESSAGE_AUTHOR_QUOTE']);
+		$event['template_vars']        			= $template_vars;
 	}
 
 	/**
