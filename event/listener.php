@@ -256,8 +256,9 @@ class listener implements EventSubscriberInterface
 		$group_member = $this->get_group_image($event['data']['user_id']);
 		if ($group_member)
 		{
-			$template_data['A_USERNAME'] = $this->strip_verify_image($template_data['A_USERNAME']);
-			$event['template_data']      = $template_data;
+			$template_data['A_USERNAME'] 	= $this->strip_verify_image($template_data['A_USERNAME']);
+			$template_data['USERNAME'] 		= $this->strip_verify_image($template_data['USERNAME']);
+			$event['template_data']      	= $template_data;
 		}
 	}
 
